@@ -86,3 +86,18 @@ BUTTON
   -moz-border-radius: 5px;
   border-radius: 5px;
 }
+
+/******************************************
+Split Bio*********************************/
+#parent_div_1, #parent_div_2, #parent_div_3{
+    width:49%;
+    height:50%;
+    margin-right:10px;
+    float:left;
+    text-align: center;
+}
+.child_div_1{
+    float:left;
+    margin-right:0px;
+    text-align:center;
+}
