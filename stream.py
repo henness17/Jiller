@@ -15,20 +15,20 @@ class listener(StreamListener):
 
 	#Collecting the on_data
 	def on_data(self, data):
-			###try:
+			try:
 				os.remove('tweetDB.html')
 				## MAY WANT TO SPLIT MORE DATA THAN JUST TWEET IN THE FUTURE, LIKE USERNAME AND LOCATION
 				tweet = data.split(',"text":"')[1].split('","source')[0] #Split the data into just the tweet
 				saveThis = str(time.time())+'::'+tweet #Get the time, add the tweet, NEED to add location
 				saveFile = open('tweetDB.html', 'a') #Save file with intention to append
-				saveFile.write("<li>"+tweet+"</li>") #Write incoming data to the file
+				saveFile.write("<li>"+saveThis+"</li>") #Write incoming data to the file
 				saveFile.write('\n') #New line to separate the data
 				saveFile.close() #Close tweetDB
 				os.startfile('tweetDB.html')
 				time.sleep(2)
 				raise SystemExit
 				return True
-			##except BaseException, e:
+			except BaseException, e:
 				print 'failed ondata',str(e)
 				time.sleep(5) #Just in case you did get limited error
 
