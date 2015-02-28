@@ -2,8 +2,8 @@ var initMap = function() {
     var layer = new MM.TemplatedLayer("http://otile1.mqcdn.com/tiles/1.0.0/osm/{Z}/{X}/{Y}.png");
     map = new MM.Map('map', layer)
 
-    var minZoom = 1;
-    var maxZoom = 2;
+    var minZoom = 3.5;
+    var maxZoom = 3.5;
     var topLeft = new MM.Location(51.4, -131.8);
     var bottomRight = new MM.Location(21.5, -50.5);
 
