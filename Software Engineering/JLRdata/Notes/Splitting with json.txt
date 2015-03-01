@@ -1,6 +1,0 @@
-why not simply convert to 'data'  to json structure and get all details directly without the split
-
-data = json.loads(HTMLParser().unescape(raw_data))
-          
-            print data["created_at"].encode('utf-8')
-            print data["text"].encode('utf-8')
