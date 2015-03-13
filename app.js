@@ -255,9 +255,12 @@ function makeCorsRequest() {
     alert('Response from JILLER server: ' + xhr.responseText);
     var mm = com.modestmaps;
 
+    var parsedData = JSON.parse(xhr.responseText);
+    var parsedText = parsedData['text'];
+
     //var parsedData = JSON.parse(xhr.responseText);
     var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
-    var popUp = new MM.Follower(map, new mm.Location(37.811530, -122.2666097), xhr.responseText);
+    var popUp = new MM.Follower(map, new mm.Location(37.811530, -122.2666097), parsedText);
   };
 
   xhr.onerror = function() {
