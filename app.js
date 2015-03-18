@@ -1,4 +1,5 @@
 /**********************************************
+ * SECTION 1:
  * This file controls the setting for the map
  * on the map page. The API for Modest Maps
  * is located at http://modestmaps.com/
@@ -57,6 +58,7 @@ var initMap = function() {
 
 
 /**********************************************
+ * SECTION 2:
  * This next section of the code controls
  * how the pop up is define on the map.
  * It is called above to set the details
@@ -209,6 +211,7 @@ if (!com) {
 })(com.modestmaps)
 
 /**********************************************
+ * SECTION 3:
  * This section controls the data for Jiller.
  * It retrieves data from the Jiller server
  * that is hosted by heroku.com by making
