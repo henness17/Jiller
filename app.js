@@ -247,8 +247,8 @@ function makeCorsRequest() {
   // All HTML5 Rocks properties support CORS.
   
   // set the query for the url
-  var query = "fart"
-  var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=1&q=' + query;
+  var query = "fart"; 
+  var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + query;
 
   var xhr = createCORSRequest('GET', url);
   if (!xhr) {
@@ -264,16 +264,44 @@ function makeCorsRequest() {
     // parse the JSON data
     var parsedData = JSON.parse(xhr.responseText);
     // create variable for statuses of JSON
+
     var statuses = parsedData["statuses"];
-    var parsedText = statuses[0].text; // parse the text from JSON
+    var parsedTweet = statuses[0].text; //parse the text of the tweeet 
+    var userName = statuses[0]["user"]["screen_name"]; //get screen name
+
+    parsedTweet = parsedTweet.substring(0,50) + "...@" + userName; 
+
+    //parse hashtags, urls, and usernames 
+    String.prototype.parseHashtag = function() {  
+      return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
+           var tag = t.replace("#","%23")  
+           return t.link("http://search.twitter.com/search?q="+tag);  
+      });  
+    }; 
+
+    String.prototype.parseURL = function() {  
+      return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
+           return url.link(url);  
+      });  
+    };  
+
+    String.prototype.parseUsername = function() {  
+      return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
+           var username = u.replace("@","")  
+           return u.link("http://twitter.com/"+username);  
+      });  
+     };  
+
+    parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
 
     // parse the essential data
-    parsedName = "RyHenness"
+    //parsedName = "RyHenness"
     parsedLong = 37.811530;
     parsedLat = -122.2666097;
     //var parsedData = JSON.parse(xhr.responseText);
     var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
-    var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
+    //var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
+    var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedTweet); 
   };
 
   xhr.onerror = function() {
