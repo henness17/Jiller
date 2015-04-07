@@ -12,6 +12,7 @@
 
 /* GLOBAL VARIABLES */
 var xhr = new XMLHttpRequest();
+var geocode = new XMLHttpRequest();
 
 
 var initMap = function() {
@@ -243,12 +244,13 @@ function createCORSRequest(method, url) {
 //}
 
 // Make the actual CORS request.
-function makeCorsRequest() {
+function makeCorsRequest(keywordSearch) {
   // All HTML5 Rocks properties support CORS.
-  
+  var keyword;
+  keyword = keywordSearch;
+
   // set the query for the url
-  var query = "fart"; 
-  var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + query;
+  var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + keywordSearch;
 
   var xhr = createCORSRequest('GET', url);
   if (!xhr) {
@@ -261,15 +263,25 @@ function makeCorsRequest() {
     //alert('Response from JILLER server: ' + xhr.responseText);
     var mm = com.modestmaps;
 
-    // parse the JSON data
-    var parsedData = JSON.parse(xhr.responseText);
-    // create variable for statuses of JSON
-
-    var statuses = parsedData["statuses"];
+    // getting user info
+    var parsedData = JSON.parse(xhr.responseText); // parse the JSON data
+    var statuses = parsedData["statuses"]; // create variable for statuses of JSON
     var parsedTweet = statuses[0].text; //parse the text of the tweeet 
     var userName = statuses[0]["user"]["screen_name"]; //get screen name
 
+    // getting the location long and lat of the users bio location
+    //var userLoc = statuses[0]["user"]["location"]; // get the user location
+    //var geocode = createCORSRequest('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
+    //var geoData = JSON.parse(geocode.responseText); // parse the JSON from geocode response
+    //var results = geoData["results"]; // create variable for results
+    
+    //var userLong = results["geometry"]["location"]["lng"]; // parse the latitude
+    //var userLat = results["geometry"]["location"]["lat"]; // parse the longitude
+    //console.log("hello" + userLong);
+    //console.log(userLat);
+    
     parsedTweet = parsedTweet.substring(0,50) + "...@" + userName; 
+    
 
     //parse hashtags, urls, and usernames 
     String.prototype.parseHashtag = function() {  
@@ -295,13 +307,13 @@ function makeCorsRequest() {
     parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
 
     // parse the essential data
-    //parsedName = "RyHenness"
-    parsedLong = 37.811530;
-    parsedLat = -122.2666097;
+    //parsedLong = 37.811530;
+    //parsedLat = -122.2666097;
+    
     //var parsedData = JSON.parse(xhr.responseText);
     var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
     //var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
-    var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedTweet); 
+    var popUp = new MM.Follower(map, new mm.Location(100, 100), parsedTweet); 
   };
 
   xhr.onerror = function() {
