@@ -24,9 +24,6 @@
     <link href="css/animate.css" rel="stylesheet">
     
     <script src="app.js"></script>
-    <script>
-      makeCorsRequest("Twitter");
-    </script>
   </head>
 
   <body onload='initMap()' bgcolor="#C5D8D5">
@@ -45,7 +42,7 @@
     <!-- Add keyword search -->
     <div id='keyword' class="animated fadeInUp delay-05s"x>
       <form>Search: <input type="text" name="querysearch" id="querysearch">
-        <input type="submit" value="Submit" onclick="makeCorsRequest(document.getElementById('querysearch').value)">
+        <input type="submit" id='button' value="Submit" onclick="makeCorsRequest(document.getElementById('querysearch').value)">
       </form>
     </div>
 
