@@ -55,6 +55,9 @@ var initMap = function() {
     }
 
     map.setCenterZoom(new MM.Location(39.7618, -98.8811), 5);
+
+    var button = document.getElementById('button'); 
+    button.onclick = makeCorsRequest; 
 }
 
 
@@ -246,6 +249,7 @@ function createCORSRequest(method, url) {
 // Make the actual CORS request.
 function makeCorsRequest(keywordSearch) {
   // All HTML5 Rocks properties support CORS.
+  console.log("Hey"); 
   var keyword;
   keyword = keywordSearch;
 
@@ -322,3 +326,8 @@ function makeCorsRequest(keywordSearch) {
 
   xhr.send();
 }
+
+// function alert(foo){
+//     var variable = foo; 
+//     alert('variable'); 
+// }
