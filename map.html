@@ -22,11 +22,11 @@
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/queries.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
-    
+    <script src='https://rawgithub.com/stamen/modestmaps-js/master/modestmaps.min.js'></script>    
     <script src="app.js"></script>
   </head>
 
-  <body onload='initMap()' bgcolor="#C5D8D5">
+  <body bgcolor="#C5D8D5">
     
     <!-- Fade in top text -->
     <div>  
@@ -34,9 +34,7 @@
     </div>
     
     <!-- Drop in animated map -->
-    <div id='map'class="animated fadeInUp delay-05s">
-      <script src='https://rawgithub.com/stamen/modestmaps-js/master/modestmaps.min.js'></script>
-      <script src='app.js'></script>
+    <div id='map' class="animated fadeInUp delay-05s">
     </div>
    
     <!-- Add keyword search -->
@@ -46,6 +44,7 @@
       </form>
     </div>
 
+    <script type="text/javascript">initMap();</script>
   </body>
 
 </html>

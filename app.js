@@ -11,11 +11,40 @@
  *********************************************/
 
 /* GLOBAL VARIABLES */
-var xhr = new XMLHttpRequest();
+
+
 var geocode = new XMLHttpRequest();
+var xhr = new XMLHttpRequest();
+
+var stupid = 1;
+  
+// TLC: Do the work of adding the button setup after
+// the page loads.  If this is done before the button
+// exists on the DOM, then the button may not have
+// any behaviour attached to it.
+if(window.attachEvent) {
+    console.log("1");
+    window.attachEvent('onload', setupButton);
+} else {
+    if(window.onload) {
+    console.log("2");
+    var curronload = window.onload;
+    var newonload = function() {
+        curronload();
+        setupButton();
+    };
+    window.onload = newonload;
+    } else {
+    console.log("3");
+    window.onload = setupButton
+        }
+}
 
 
-var initMap = function() {
+function initMap() {
+
+    console.log("initting");
+
     var layer = new MM.TemplatedLayer("http://otile1.mqcdn.com/tiles/1.0.0/osm/{Z}/{X}/{Y}.png");
     map = new MM.Map('map', layer)
 
@@ -56,10 +85,7 @@ var initMap = function() {
 
     map.setCenterZoom(new MM.Location(39.7618, -98.8811), 5);
 
-    var button = document.getElementById('button'); 
-    button.onclick = makeCorsRequest; 
-}
-
+};
 
 /**********************************************
  * SECTION 2:
@@ -229,7 +255,7 @@ if (!com) {
 function createCORSRequest(method, url) {
   if ("withCredentials" in xhr) {
     // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true);
+    xhr.open(method, url, false);
   } else if (typeof XDomainRequest != "undefined") {
     // XDomainRequest for IE.
     xhr = new XDomainRequest();
@@ -248,10 +274,11 @@ function createCORSRequest(method, url) {
 
 // Make the actual CORS request.
 function makeCorsRequest(keywordSearch) {
+
   // All HTML5 Rocks properties support CORS.
   console.log("Hey"); 
-  var keyword;
-  keyword = keywordSearch;
+  var keyword = "dog";
+  keywordSearch = "dog";
 
   // set the query for the url
   var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + keywordSearch;
@@ -264,7 +291,10 @@ function makeCorsRequest(keywordSearch) {
 
   // Response handlers.
   xhr.onload = function() {
-    //alert('Response from JILLER server: ' + xhr.responseText);
+    
+    var responseText = xhr.responseText;
+    console.log(responseText);
+
     var mm = com.modestmaps;
 
     // getting user info
@@ -315,17 +345,37 @@ function makeCorsRequest(keywordSearch) {
     //parsedLat = -122.2666097;
     
     //var parsedData = JSON.parse(xhr.responseText);
-    var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
+    //var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
     //var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
-    var popUp = new MM.Follower(map, new mm.Location(100, 100), parsedTweet); 
+     var popUp = new MM.Follower(map, new mm.Location(100, 100), parsedTweet); 
   };
 
   xhr.onerror = function() {
     alert('Woops, there was an error making the request.');
   };
 
+  console.log(xhr);
+
   xhr.send();
 }
+
+// Do the work of attaching onclick behavior to the button.
+function setupButton(){
+
+    if (arguments.callee.done) return;
+
+    console.log("Adding behavior to the button");
+    // initMap();
+    var button = document.getElementById('button'); 
+    button.onclick = makeCorsRequest; 
+    
+    arguments.callee.done = true;
+
+    // window.onload = bob;
+
+}
+
+function bob() { console.log("this?");}
 
 // function alert(foo){
 //     var variable = foo; 
