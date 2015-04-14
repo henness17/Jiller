@@ -12,39 +12,44 @@
 <html>
   <head>
     <title>JLRdata | Live Tweets</title>
-    <link rel='stylesheet' href='style.css'>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <script src='https://rawgithub.com/stamen/modestmaps-js/master/modestmaps.min.js'></script>
+    <link rel='stylesheet' href='style.css'>
+
+<!-- 
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/flexslider.css" rel="stylesheet" >
+   <link href="css/flexslider.css" rel="stylesheet" >
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/queries.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
-    <script src='https://rawgithub.com/stamen/modestmaps-js/master/modestmaps.min.js'></script>    
-    <script src="app.js"></script>
+
+-->
+   
   </head>
 
   <body bgcolor="#C5D8D5">
     
     <!-- Fade in top text -->
     <div>  
-      <h4 align="center" color="blue" class="animated fadeInDown">JLRdata | Live Tweets</h1>
+      <h4 align="center" color="blue">JLRdata | Live Tweets</h1>
     </div>
     
     <!-- Drop in animated map -->
-    <div id='map' class="animated fadeInUp delay-05s">
+    <div id='map'>
     </div>
    
     <!-- Add keyword search -->
-    <div id='keyword' class="animated fadeInUp delay-05s"x>
-      <form>Search: <input type="text" name="querysearch" id="querysearch">
-        <input type="submit" id='button' value="Submit">
+    <div id='keyword'>
+      
+      <form>
+	<input id="searchTerm" type="text">
       </form>
+        <button id="data" name="data" type="button">Click</button>
     </div>
-
-    <script type="text/javascript">initMap();</script>
+    <script src="app.js"></script>
   </body>
 
 </html>
