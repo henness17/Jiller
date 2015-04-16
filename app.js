@@ -87,27 +87,27 @@ var page = (function() {
     
     var init=function() {
 
-	console.log('Initialized.');
-	// This behavior only needs to happen once.
-	console.log("Adding behavior to the button");
-	var button = document.getElementById('data'); 
-	button.onclick = makeCorsRequest; 
-	initMap();
+    console.log('Initialized.');
+    // This behavior only needs to happen once.
+    console.log("Adding behavior to the button");
+    var button = document.getElementById('data'); 
+    button.onclick = makeCorsRequest; 
+    initMap();
 
-	self.need_init=false;
+    self.need_init=false;
     }
     
     return {
-	doit: function() {
+    doit: function() {
 
-	    // If init hasn't been called yet, call it.
-	    if(typeof self.need_init==='undefined') {
-		init();
-	    }
+        // If init hasn't been called yet, call it.
+        if(typeof self.need_init==='undefined') {
+        init();
+        }
 
-	    else { console.log("I hate you"); }
-	    // Otherwise, do nothing.
-	}
+        else { console.log("I hate you"); }
+        // Otherwise, do nothing.
+    }
     };
     })();
 
@@ -347,24 +347,21 @@ function createCORSRequest(method, url) {
 
 // Make the actual CORS request.
 function makeCorsRequest(keywordSearch) {
-
     var keywordSearch = document.getElementById('searchTerm').value;
-
-    console.log(keywordSearch);
-
-    // All HTML5 Rocks properties support CORS.
     
     // set the query for the url
     var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + keywordSearch;
 
     var xhr = createCORSRequest('GET', url);
     if (!xhr) {
-	alert('CORS not supported');
-	return;
+    alert('CORS not supported');
+    return;
     }
-    console.log(xhr);
-    
     xhr.send();
-}
+
+    setInterval(makeCorsRequest, 6000);
+ }
+
+
 
  
