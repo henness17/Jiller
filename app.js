@@ -13,66 +13,72 @@
 /* GLOBAL VARIABLES */
 
 
-var geocode = new XMLHttpRequest();
 var xhr = new XMLHttpRequest();
+var geocode = new XMLHttpRequest();
+var geoData;
+var results;
 
   // Response handlers.
   xhr.onload = function() {
     
     var responseText = xhr.responseText;
-    console.log(responseText);
+    //console.log(responseText);
 
     // getting user info
     var parsedData = JSON.parse(xhr.responseText); // parse the JSON data
+    console.log(parsedData);
     var statuses = parsedData["statuses"]; // create variable for statuses of JSON
     var parsedTweet = statuses[0].text; //parse the text of the tweeet 
     var userName = statuses[0]["user"]["screen_name"]; //get screen name
 
     // getting the location long and lat of the users bio location
-    //var userLoc = statuses[0]["user"]["location"]; // get the user location
-    //var geocode = createCORSRequest('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
-    //var geoData = JSON.parse(geocode.responseText); // parse the JSON from geocode response
-    //var results = geoData["results"]; // create variable for results
-    
-    //var userLong = results["geometry"]["location"]["lng"]; // parse the latitude
-    //var userLat = results["geometry"]["location"]["lat"]; // parse the longitude
-    //console.log("hello" + userLong);
-    //console.log(userLat);
-    
-    parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
+    var userLoc = statuses[0]["user"]["location"]; // get the user location
+    makeGeoCORSRq();
 
-    //parse hashtags, urls, and usernames 
-    String.prototype.parseHashtag = function() {  
-      return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
-           var tag = t.replace("#","%23")  
-           return t.link("http://search.twitter.com/search?q="+tag);  
-      });  
-    }; 
+    //geocode.onload = function() {
+        console.log(geocode);
+         // create variable for results
+        console.log(results);
+        var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
+        var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
+        console.log(userLong);
+        console.log(userLat);
 
-    String.prototype.parseURL = function() {  
-      return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
-           return url.link(url);  
-      });  
-    };  
+        parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
 
-    String.prototype.parseUsername = function() {  
-      return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
-           var username = u.replace("@","")  
-           return u.link("http://twitter.com/"+username);  
-      });  
-     };  
+        //parse hashtags, urls, and usernames 
+        String.prototype.parseHashtag = function() {  
+          return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
+               var tag = t.replace("#","%23")  
+               return t.link("http://search.twitter.com/search?q="+tag);  
+          });  
+        }; 
 
-    parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
+        String.prototype.parseURL = function() {  
+          return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
+               return url.link(url);  
+          });  
+        };  
 
-    // parse the essential data
-    //parsedLong = 37.811530;
-    //parsedLat = -122.2666097;
-    
-    //var parsedData = JSON.parse(xhr.responseText);
-    //var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
-    //var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
-     var popUp = new MM.Follower(map, new MM.Location(100, 100), parsedTweet); 
-    console.log("done");
+        String.prototype.parseUsername = function() {  
+          return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
+               var username = u.replace("@","")  
+               return u.link("http://twitter.com/"+username);  
+          });  
+         };  
+
+        parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
+
+        // parse the essential data
+        //parsedLong = 37.811530;
+        //parsedLat = -122.2666097;
+        
+        //var parsedData = JSON.parse(xhr.responseText);
+        //var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
+        //var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
+        var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
+        console.log("done");
+   // }; 
   };
 
   xhr.onerror = function() {
@@ -350,7 +356,7 @@ function makeCorsRequest(keywordSearch) {
     var keywordSearch = document.getElementById('searchTerm').value;
     
     // set the query for the url
-    var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + keywordSearch;
+    var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=1&q=' + keywordSearch;
 
     var xhr = createCORSRequest('GET', url);
     if (!xhr) {
@@ -358,10 +364,35 @@ function makeCorsRequest(keywordSearch) {
     return;
     }
     xhr.send();
-
-    setInterval(makeCorsRequest, 6000);
+    //setInterval(makeCorsRequest, 6000);
  }
 
 
-
+function createGeoCORSRq() {
+  if ("withCredentials" in geocode) {
+    // XHR for Chrome/Firefox/Opera/Safari.
+    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg', false);
+  } else if (typeof XDomainRequest != "undefined") {
+    // XDomainRequest for IE.
+    geocode = new XDomainRequest();
+    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
+  } else {
+    // CORS not supported.
+    geocode = null;
+  }
+  console.log(geocode);
+  return geocode;
+}
  
+function makeGeoCORSRq() {
+    geocode = createGeoCORSRq();
+    if (!geocode) {
+    alert('CORS not supported');
+    return;
+    }
+    console.log(geocode);
+    geocode.send();
+
+    geoData = JSON.parse(geocode.responseText); // parse the JSON from geocode response
+    results = geoData["results"];
+ } 
