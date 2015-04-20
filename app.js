@@ -5,80 +5,71 @@
  * is located at http://modestmaps.com/
  *
  * It also is acting as theh data controller as 
- * now.
+ * now. It manipulates the data retrieved and
+ * creates a pop up with the information.
  * 
- * @Authors JD Michlanski, Lindsey Kramer, Ryan Henness
+ * @Authors Ryan Henness, Lindsey Kramer, and JD Michlanski 
  *********************************************/
 
 /* GLOBAL VARIABLES */
-
-
 var xhr = new XMLHttpRequest();
 var geocode = new XMLHttpRequest();
 var geoData;
-var results;
+var results; // store JSON for geo location section
+var userLoc; // location from the user bio
 
   // Response handlers.
   xhr.onload = function() {
-    
-    var responseText = xhr.responseText;
-    //console.log(responseText);
 
-    // getting user info
+    // collect response text of JSON    
+    var responseText = xhr.responseText;
+
+    // getting user info from JSON
     var parsedData = JSON.parse(xhr.responseText); // parse the JSON data
     console.log(parsedData);
     var statuses = parsedData["statuses"]; // create variable for statuses of JSON
     var parsedTweet = statuses[0].text; //parse the text of the tweeet 
-    var userName = statuses[0]["user"]["screen_name"]; //get screen name
+    var userName = statuses[0]["user"]["screen_name"]; 
 
     // getting the location long and lat of the users bio location
-    var userLoc = statuses[0]["user"]["location"]; // get the user location
-    makeGeoCORSRq();
+    userLoc = statuses[0]["user"]["location"]; // get location
+    makeGeoCORSRq(); //call Geo CORS request
 
-    //geocode.onload = function() {
-        console.log(geocode);
-         // create variable for results
-        console.log(results);
-        var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
-        var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
-        console.log(userLong);
-        console.log(userLat);
+    // create variable for results
+    console.log(results);
+    var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
+    var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
+    console.log(userLong);
+    console.log(userLat);
 
-        parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
+    parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
 
-        //parse hashtags, urls, and usernames 
-        String.prototype.parseHashtag = function() {  
-          return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
-               var tag = t.replace("#","%23")  
-               return t.link("http://search.twitter.com/search?q="+tag);  
-          });  
-        }; 
+    //parse hashtags, urls, and usernames 
+    String.prototype.parseHashtag = function() {  
+      return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
+           var tag = t.replace("#","%23")  
+           return t.link("http://search.twitter.com/search?q="+tag);  
+      });  
+    }; 
 
-        String.prototype.parseURL = function() {  
-          return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
-               return url.link(url);  
-          });  
-        };  
+    String.prototype.parseURL = function() {  
+      return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
+           return url.link(url);  
+      });  
+    };  
 
-        String.prototype.parseUsername = function() {  
-          return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
-               var username = u.replace("@","")  
-               return u.link("http://twitter.com/"+username);  
-          });  
-         };  
+    String.prototype.parseUsername = function() {  
+      return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
+           var username = u.replace("@","")  
+           return u.link("http://twitter.com/"+username);  
+      });  
+     };  
 
-        parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
-
-        // parse the essential data
-        //parsedLong = 37.811530;
-        //parsedLat = -122.2666097;
-        
-        //var parsedData = JSON.parse(xhr.responseText);
-        //var layer = new MM.TemplatedLayer('http://osm-bayarea.s3.amazonaws.com/{Z}-r{Y}-c{X}.jpg');
-        //var popUp = new MM.Follower(map, new mm.Location(parsedLong, parsedLat), parsedText.substring(0,50) + "..." + "\n@" + parsedName);
-        var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
-        console.log("done");
-   // }; 
+    // call the parsing functinos on the tweet
+    parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
+    
+    var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
+    console.log("done");
   };
 
   xhr.onerror = function() {
@@ -116,8 +107,6 @@ var page = (function() {
     }
     };
     })();
-
- 
 page.doit();
 
 
@@ -169,7 +158,7 @@ function initMap() {
 /**********************************************
  * SECTION 2:
  * This next section of the code controls
- * how the pop up is define on the map.
+ * how the pop up is defined on the map.
  * It is called above to set the details
  * of your pop up.
  *********************************************/
@@ -250,6 +239,7 @@ if (!com) {
         
         map.parent.appendChild(this.div);
         
+        console.log(userLoc);
         this.draw(map);
     }
     
@@ -326,6 +316,9 @@ if (!com) {
  * that is hosted by heroku.com by making
  * a CORS request. 
  *
+ * The CORS requests are split up into two,
+ * one for the tweet, another for the Geocode.
+ *
  * This code is adapted from an article 
  * written by Monsur Hossain on html5rocks.com. 
  *********************************************/
@@ -346,12 +339,7 @@ function createCORSRequest(method, url) {
   return xhr;
 }
 
-// Helper method to parse the title tag from the response.
-//function getTitle(text) {
-//  return text.match('<title>(.*)?</title>')[1];
-//}
-
-// Make the actual CORS request.
+// Make the actual CORS request for Geocode
 function makeCorsRequest(keywordSearch) {
     var keywordSearch = document.getElementById('searchTerm').value;
     
@@ -364,18 +352,20 @@ function makeCorsRequest(keywordSearch) {
     return;
     }
     xhr.send();
+    
     setInterval(makeCorsRequest, 6000);
  }
-
+ 
+ //////////////////////////////////GEOCODE CORS////////////////////////////////////////////
 
 function createGeoCORSRq() {
   if ("withCredentials" in geocode) {
     // XHR for Chrome/Firefox/Opera/Safari.
-    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg', false);
+    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,'+userLoc+'&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg', false);
   } else if (typeof XDomainRequest != "undefined") {
     // XDomainRequest for IE.
     geocode = new XDomainRequest();
-    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
+    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,'+userLoc+'&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
   } else {
     // CORS not supported.
     geocode = null;
