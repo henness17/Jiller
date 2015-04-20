@@ -364,7 +364,7 @@ function makeCorsRequest(keywordSearch) {
     return;
     }
     xhr.send();
-    //setInterval(makeCorsRequest, 6000);
+    setInterval(makeCorsRequest, 6000);
  }
 
 
