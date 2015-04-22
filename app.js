@@ -17,6 +17,7 @@ var geocode = new XMLHttpRequest();
 var geoData;
 var results; // store JSON for geo location section
 var userLoc; // location from the user bio
+var i = 0; // for looping through the array of status'
 
   // Response handlers.
   xhr.onload = function() {
@@ -41,6 +42,7 @@ var userLoc; // location from the user bio
     var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
     console.log(userLong);
     console.log(userLat);
+    console.log(userLoc);
 
     parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
 
@@ -68,12 +70,19 @@ var userLoc; // location from the user bio
     // call the parsing functinos on the tweet
     parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
     
-    var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
+    //if((userLat != null) && (userLong != null)){
+        var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
+    //}   
     console.log("done");
+    //if(i > 20){
+    //    i++;
+    //    console.log(i)
+    //    xhr.onload();
+    //}
   };
 
   xhr.onerror = function() {
-    alert('Woops, there was an error making the request.');
+    alert('Woops, there was an error making the request.'); 
   };
 
 
@@ -344,7 +353,7 @@ function makeCorsRequest(keywordSearch) {
     var keywordSearch = document.getElementById('searchTerm').value;
     
     // set the query for the url
-    var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=1&q=' + keywordSearch;
+    var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + keywordSearch;
 
     var xhr = createCORSRequest('GET', url);
     if (!xhr) {
@@ -353,7 +362,8 @@ function makeCorsRequest(keywordSearch) {
     }
     xhr.send();
     
-    setInterval(makeCorsRequest, 6000);
+    setInterval(initMap, 6000); // redraw the map
+    setInterval(makeCorsRequest, 6000); // make another request
  }
  
  //////////////////////////////////GEOCODE CORS////////////////////////////////////////////
@@ -361,11 +371,11 @@ function makeCorsRequest(keywordSearch) {
 function createGeoCORSRq() {
   if ("withCredentials" in geocode) {
     // XHR for Chrome/Firefox/Opera/Safari.
-    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,'+userLoc+'&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg', false);
+    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address='+userLoc+'&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg', false);
   } else if (typeof XDomainRequest != "undefined") {
     // XDomainRequest for IE.
     geocode = new XDomainRequest();
-    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,'+userLoc+'&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
+    geocode.open('GET', 'https://maps.googleapis.com/maps/api/geocode/json?address='+userLoc+'&key=AIzaSyAQJsPN1zJu6kQIGsUvw-1XQVWu-WBc7Sg');
   } else {
     // CORS not supported.
     geocode = null;
