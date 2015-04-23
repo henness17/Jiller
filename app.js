@@ -17,7 +17,7 @@ var geocode = new XMLHttpRequest();
 var geoData;
 var results; // store JSON for geo location section
 var userLoc; // location from the user bio
-
+var myInterval;
   // Response handlers.
   xhr.onload = function() {
 
@@ -30,7 +30,7 @@ var userLoc; // location from the user bio
     var statuses = parsedData["statuses"]; // create variable for statuses of JSON
     i = 0;
 
-    var myInterval = setInterval(function() {
+    myInterval = setInterval(function() {
         console.log(i);
         var parsedTweet = statuses[i]["text"]; //parse the text of the tweeet 
         var userName = statuses[i]["user"]["screen_name"]; 
@@ -41,7 +41,7 @@ var userLoc; // location from the user bio
 
         geocode.onload = function(){
             // create variable for results
-            initMap();
+            initMap(); // redraw the map for the new tweet
             console.log(results);
             var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
             var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
@@ -84,7 +84,7 @@ var userLoc; // location from the user bio
         if(i > 20){
             window.clearInterval(myInterval);
         }  
-    }, 5000);
+    }, 6000);
   };
 
   xhr.onerror = function() {
@@ -356,8 +356,9 @@ function createCORSRequest(method, url) {
 
 // Make the actual CORS request for Geocode
 function makeCorsRequest(keywordSearch) {
+    console.log("Make CORS request");
     var keywordSearch = document.getElementById('searchTerm').value;
-    
+    window.clearInterval(myInterval);
     // set the query for the url
     var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=21&q=' + keywordSearch;
 
