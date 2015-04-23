@@ -18,6 +18,7 @@ var geoData;
 var results; // store JSON for geo location section
 var userLoc; // location from the user bio
 var myInterval;
+
   // Response handlers.
   xhr.onload = function() {
 
