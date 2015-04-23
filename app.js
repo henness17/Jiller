@@ -17,7 +17,6 @@ var geocode = new XMLHttpRequest();
 var geoData;
 var results; // store JSON for geo location section
 var userLoc; // location from the user bio
-var i = 0; // for looping through the array of status'
 
   // Response handlers.
   xhr.onload = function() {
@@ -29,56 +28,63 @@ var i = 0; // for looping through the array of status'
     var parsedData = JSON.parse(xhr.responseText); // parse the JSON data
     console.log(parsedData);
     var statuses = parsedData["statuses"]; // create variable for statuses of JSON
-    var parsedTweet = statuses[0].text; //parse the text of the tweeet 
-    var userName = statuses[0]["user"]["screen_name"]; 
+    i = 0;
 
-    // getting the location long and lat of the users bio location
-    userLoc = statuses[0]["user"]["location"]; // get location
-    makeGeoCORSRq(); //call Geo CORS request
+    var myInterval = setInterval(function() {
+        console.log(i);
+        var parsedTweet = statuses[i]["text"]; //parse the text of the tweeet 
+        var userName = statuses[i]["user"]["screen_name"]; 
+        console.log(userName);
+        // getting the location long and lat of the users bio location
+        userLoc = statuses[i]["user"]["location"]; // get location
+        makeGeoCORSRq(); //call Geo CORS request
 
-    // create variable for results
-    console.log(results);
-    var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
-    var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
-    console.log(userLong);
-    console.log(userLat);
-    console.log(userLoc);
+        geocode.onload = function(){
+            // create variable for results
+            initMap();
+            console.log(results);
+            var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
+            var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
+            console.log(userLong);
+            console.log(userLat);
+            console.log(userLoc);
 
-    parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
+            parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
 
-    //parse hashtags, urls, and usernames 
-    String.prototype.parseHashtag = function() {  
-      return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
-           var tag = t.replace("#","%23")  
-           return t.link("http://search.twitter.com/search?q="+tag);  
-      });  
-    }; 
+            //parse hashtags, urls, and usernames 
+            String.prototype.parseHashtag = function() {  
+              return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
+                   var tag = t.replace("#","%23")  
+                   return t.link("http://search.twitter.com/search?q="+tag);  
+              });  
+            }; 
 
-    String.prototype.parseURL = function() {  
-      return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
-           return url.link(url);  
-      });  
-    };  
+            String.prototype.parseURL = function() {  
+              return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
+                   return url.link(url);  
+              });  
+            };  
 
-    String.prototype.parseUsername = function() {  
-      return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
-           var username = u.replace("@","")  
-           return u.link("http://twitter.com/"+username);  
-      });  
-     };  
+            String.prototype.parseUsername = function() {  
+              return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
+                   var username = u.replace("@","")  
+                   return u.link("http://twitter.com/"+username);  
+              });  
+             };  
 
-    // call the parsing functinos on the tweet
-    parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
-    
-    //if((userLat != null) && (userLong != null)){
-        var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
-    //}   
-    console.log("done");
-    //if(i > 20){
-    //    i++;
-    //    console.log(i)
-    //    xhr.onload();
-    //}
+            // call the parsing functinos on the tweet
+            parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
+            
+            //if((userLat != null) && (userLong != null)){
+            var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
+            //}   
+            console.log("done");
+            }
+        i++;
+        if(i > 20){
+            window.clearInterval(myInterval);
+        }  
+    }, 5000);
   };
 
   xhr.onerror = function() {
@@ -353,7 +359,7 @@ function makeCorsRequest(keywordSearch) {
     var keywordSearch = document.getElementById('searchTerm').value;
     
     // set the query for the url
-    var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=20&q=' + keywordSearch;
+    var url = 'http://whispering-bayou-9488.herokuapp.com/tweets_json.php?count=21&q=' + keywordSearch;
 
     var xhr = createCORSRequest('GET', url);
     if (!xhr) {
@@ -361,9 +367,8 @@ function makeCorsRequest(keywordSearch) {
     return;
     }
     xhr.send();
-    
-    setInterval(initMap, 6000); // redraw the map
-    setInterval(makeCorsRequest, 6000); // make another request
+
+    setInterval(makeCorsRequest, 100000); // make another request
  }
  
  //////////////////////////////////GEOCODE CORS////////////////////////////////////////////
