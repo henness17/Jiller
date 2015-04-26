@@ -238,7 +238,9 @@ if (!com) {
         bubCtx.stroke();    
         
         var contentDiv = document.createElement('div');
+        contentDiv.style.wordWrap="break-word"; 
         contentDiv.style.position = 'absolute';
+        contentDiv.style.fontSize="10px"
         contentDiv.style.left = '0px';
         contentDiv.style.top = '0px';
         contentDiv.style.overflow = 'hidden';    
@@ -403,3 +405,17 @@ function makeGeoCORSRq() {
     geoData = JSON.parse(geocode.responseText); // parse the JSON from geocode response
     results = geoData["results"];
  } 
+
+
+ document.onreadystatechange = function () {
+  var state = document.readyState
+  if (state == 'interactive') {
+       document.getElementById('contents').style.visibility="hidden";
+  } else if (state == 'complete') {
+      setTimeout(function(){
+         document.getElementById('interactive');
+         document.getElementById('load').style.visibility="hidden";
+         document.getElementById('contents').style.visibility="visible";
+      },1000);
+  }
+}
