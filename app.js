@@ -38,6 +38,7 @@ var myInterval;
         console.log(userName);
         // getting the location long and lat of the users bio location
         userLoc = statuses[i]["user"]["location"]; // get location
+        var urlID = statuses[i]["user"]["id_str"]; 
         makeGeoCORSRq(); //call Geo CORS request
 
         geocode.onload = function(){
@@ -45,36 +46,39 @@ var myInterval;
             initMap(); // redraw the map for the new tweet
             console.log(results);
             var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
-            var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
+            var userLat = statuses[0]["geometry"]["location"]["lat"]; // parse the longitude
+
+            
             console.log(userLong);
             console.log(userLat);
             console.log(userLoc);
 
             parsedTweet = parsedTweet.substring(0,85) + "...@" + userName;     
+            parsedTweet = parsedTweet.link("http://twitter.com/"+userName+"/status/"+urlID); 
 
-            //parse hashtags, urls, and usernames 
-            String.prototype.parseHashtag = function() {  
-              return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
-                   var tag = t.replace("#","%23")  
-                   return t.link("http://search.twitter.com/search?q="+tag);  
-              });  
-            }; 
+            // //parse hashtags, urls, and usernames 
+            // String.prototype.parseHashtag = function() {  
+            //   return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {  
+            //        var tag = t.replace("#","%23")  
+            //        return t.link("http://search.twitter.com/search?q="+tag);  
+            //   });  
+            // }; 
 
-            String.prototype.parseURL = function() {  
-              return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
-                   return url.link(url);  
-              });  
-            };  
+            // String.prototype.parseURL = function() {  
+            //   return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function(url) {  
+            //        return url.link(url);  
+            //   });  
+            // };  
 
-            String.prototype.parseUsername = function() {  
-              return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
-                   var username = u.replace("@","")  
-                   return u.link("http://twitter.com/"+username);  
-              });  
-             };  
+            // String.prototype.parseUsername = function() {  
+            //   return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {  
+            //        var username = u.replace("@","")  
+            //        return u.link("http://twitter.com/"+username);  
+            //   });  
+            //  };  
 
-            // call the parsing functinos on the tweet
-            parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
+            // // call the parsing functinos on the tweet
+            // parsedTweet = (parsedTweet.parseURL().parseUsername().parseHashtag()); 
             
             //if((userLat != null) && (userLong != null)){
             var popUp = new MM.Follower(map, new MM.Location(userLat, userLong), parsedTweet); 
