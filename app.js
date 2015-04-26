@@ -50,7 +50,7 @@ var myInterval;
             console.log(userLat);
             console.log(userLoc);
 
-            parsedTweet = parsedTweet.substring(0,50) + "...@" + userName;     
+            parsedTweet = parsedTweet.substring(0,85) + "...@" + userName;     
 
             //parse hashtags, urls, and usernames 
             String.prototype.parseHashtag = function() {  
