@@ -46,7 +46,7 @@ var myInterval;
             initMap(); // redraw the map for the new tweet
             console.log(results);
             var userLong = results[0]["geometry"]["location"]["lng"]; // parse the latitude
-            var userLat = statuses[0]["geometry"]["location"]["lat"]; // parse the longitude
+            var userLat = results[0]["geometry"]["location"]["lat"]; // parse the longitude
 
             
             console.log(userLong);
