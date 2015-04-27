@@ -244,7 +244,9 @@ if (!com) {
         var contentDiv = document.createElement('div');
         contentDiv.style.wordWrap="break-word"; 
         contentDiv.style.position = 'absolute';
-        contentDiv.style.fontSize="10px"
+        contentDiv.style.fontSize="10px"; 
+        contentDiv.style.color="#000000"; 
+        contentDiv.style.backgroundImage="url(http://thisdogslife.co/wp-content/themes/this-dogs-life/images/dog-icon.png)"
         contentDiv.style.left = '0px';
         contentDiv.style.top = '0px';
         contentDiv.style.overflow = 'hidden';    
